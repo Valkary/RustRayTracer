@@ -8,7 +8,7 @@ pub struct Camera {
     pub height: usize,
     pub near_plane: f64,
     pub fal_plane: f64,
-    pub position: Vector3
+    pub position: Vector3,
 }
 
 impl Camera {
@@ -39,7 +39,6 @@ impl Camera {
                 positions[y][x] = Vector3::new(pos_x, pos_y, self.default_z);
             }
         }
-
 
         return positions;
     }

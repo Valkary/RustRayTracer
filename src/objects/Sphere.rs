@@ -1,19 +1,23 @@
 use std::fmt;
 
-use image::Rgb;
+use super::Ray::Ray;
 use crate::tools::Intersectable::{Intersectable, Intersection};
 use crate::tools::Vector3::Vector3;
-use super::Ray::Ray;
+use image::Rgb;
 
 pub struct Sphere {
     position: Vector3,
     radius: f64,
-    color: Rgb<f32>
+    color: Rgb<f32>,
 }
 
 impl fmt::Display for Sphere {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Sphere: {{\n  position: {},\n  radius: {},\n  color: {:?}\n}}", self.position, self.radius, self.color)
+        write!(
+            f,
+            "Sphere: {{\n  position: {},\n  radius: {},\n  color: {:?}\n}}",
+            self.position, self.radius, self.color
+        )
     }
 }
 
@@ -22,8 +26,8 @@ impl Sphere {
         return Sphere {
             position,
             radius,
-            color
-        }
+            color,
+        };
     }
 
     pub fn get_position(&self) -> Vector3 {
@@ -46,16 +50,19 @@ impl Intersectable for Sphere {
         let diff = (self.radius.powi(2) - d.powi(2)).sqrt();
         let t0 = tca - diff;
         let t1 = tca + diff;
-        
+
         let distance = t0.min(t1);
-        let position = Vector3::add(&ray.origin, &Vector3::scalar_multiplication(&ray.get_direction(), distance));
+        let position = Vector3::add(
+            &ray.origin,
+            &Vector3::scalar_multiplication(&ray.get_direction(), distance),
+        );
         let normal = Vector3::normalize(&Vector3::sub(&position, &self.position));
 
         return Some(Intersection {
             distance,
             position,
             normal,
-            color: self.color
-        })
+            color: self.color,
+        });
     }
 }

@@ -1,3 +1,5 @@
+use image::Rgb;
+
 use crate::{
     objects::{Camera::Camera, Ray::Ray},
     tools::{
@@ -27,65 +29,39 @@ impl<'a> Scene<'a> {
         self.objects.push(object);
     }
 
-    // public static BufferedImage raytrace(Scene scene) {
-    //     Camera mainCamera = scene.getCamera();
-    //     double[] nearFarPlanes = mainCamera.getNearFarPlanes();
-    //     BufferedImage image = new BufferedImage(mainCamera.getResolutionWidth(), mainCamera.getResolutionHeight(), BufferedImage.TYPE_INT_RGB);
-    //     List<Object3D> objects = scene.getObjects();
-    //     Vector3D[][] posRaytrace = mainCamera.calculatePositionsToRay();
-    //     Vector3D pos = mainCamera.getPosition();
-    //     double cameraZ = pos.getZ();
-
-    //     for (int i = 0; i < posRaytrace.length; i++) {
-    //         for (int j = 0; j < posRaytrace[i].length; j++) {
-    //             double x = posRaytrace[i][j].getX() + pos.getX();
-    //             double y = posRaytrace[i][j].getY() + pos.getY();
-    //             double z = posRaytrace[i][j].getZ() + pos.getZ();
-
-    //             Ray ray = new Ray(mainCamera.getPosition(), new Vector3D(x, y, z));
-    //             Intersection closestIntersection = raycast(ray, objects, null,
-    //                     new double[]{cameraZ + nearFarPlanes[0], cameraZ + nearFarPlanes[1]});
-
-    //             Color pixelColor = Color.BLACK;
-    //             if (closestIntersection != null) {
-    //                 //pixelColor = closestIntersection.getObject().getColor();
-    //                 pixelColor = Light.getLightedColor(closestIntersection, scene.getLight());
-    //             }
-    //             image.setRGB(i, j, pixelColor.getRGB());
-    //         }
-    //     }
-
-    //     return image;
-    // }
-
-    pub fn raytrace(&self) {
+    pub fn raytrace(&self) -> Vec<Vec<Rgb<f32>>> {
         let pos_raytrace = self.camera.calculate_ray_positions();
+        let mut pixel_buffer: Vec<Vec<Rgb<f32>>> = Vec::with_capacity(self.camera.height);
 
         for y in 0..self.camera.height {
+            pixel_buffer.push(Vec::with_capacity(self.camera.width));
             for x in 0..self.camera.width {
                 let curr_x = pos_raytrace[y][x].x + self.camera.position.x;
                 let curr_y = pos_raytrace[y][x].y + self.camera.position.y;
                 let curr_z = pos_raytrace[y][x].z + self.camera.position.z;
 
                 let ray = Ray::new(&self.camera.position, &Vector3::new(curr_x, curr_y, curr_z));
-                
+
                 match self.raycast(ray) {
-                    Some(inter) => todo!(),
-                    None => todo!(),
+                    Some(inter) => pixel_buffer[y][x] = inter.color,
+                    None => pixel_buffer[y][x] = image::Rgb([0.0, 0.0, 0.0]),
                 }
             }
         }
+
+        return pixel_buffer;
     }
 
     fn raycast(&self, ray: Ray) -> Option<Intersection> {
-        return self.objects
+        return self
+            .objects
             .iter()
             .fold(None, |acc: Option<Intersection>, object| {
                 match object.get_intersection(&ray) {
                     Some(curr) => match &acc {
                         Some(prev) => {
                             if curr.distance < prev.distance {
-                                return Some(curr.clone())
+                                return Some(curr.clone());
                             } else {
                                 return acc;
                             }
@@ -94,6 +70,6 @@ impl<'a> Scene<'a> {
                     },
                     None => return acc,
                 }
-            })
+            });
     }
 }

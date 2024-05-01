@@ -2,8 +2,8 @@ mod Scene;
 mod objects;
 mod tools;
 
-use crate::objects::{Sphere::Sphere, Camera::Camera};
-use crate::tools::{Vector3::Vector3, Intersectable::Intersectable};
+use crate::objects::{Camera::Camera, Sphere::Sphere};
+use crate::tools::{Intersectable::Intersectable, Vector3::Vector3};
 
 fn main() {
     let camera = Camera {
@@ -18,7 +18,7 @@ fn main() {
     };
 
     let sphere = Sphere::new(
-        Vector3::new(0.0, 0.0, 0.0),
+        Vector3::new(0.0, 0.0, 30.0),
         10.0,
         image::Rgb([0.0, 0.0, 0.0]),
     );
@@ -29,4 +29,5 @@ fn main() {
 
     let mut scene: Scene::Scene = Scene::Scene::new(camera);
     scene.set_objects(objects);
+    let pixel_buffer = scene.raytrace();
 }
