@@ -1,3 +1,5 @@
+use std::fmt;
+
 use image::Rgb;
 use crate::tools::Intersectable::{Intersectable, Intersection};
 use crate::tools::Vector3::Vector3;
@@ -9,6 +11,12 @@ pub struct Sphere {
     color: Rgb<f32>
 }
 
+impl fmt::Display for Sphere {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Sphere: {{\n  position: {},\n  radius: {},\n  color: {:?}\n}}", self.position, self.radius, self.color)
+    }
+}
+
 impl Sphere {
     pub fn new(position: Vector3, radius: f64, color: Rgb<f32>) -> Self {
         return Sphere {
@@ -17,10 +25,14 @@ impl Sphere {
             color
         }
     }
+
+    pub fn get_position(&self) -> Vector3 {
+        return self.position.clone();
+    }
 }
 
 impl Intersectable for Sphere {
-    fn get_intersection(&self, ray: Ray) -> Option<Intersection> {
+    fn get_intersection(&self, ray: &Ray) -> Option<Intersection> {
         let l = Vector3::sub(&self.position, &ray.origin);
         let tca = Vector3::dot_product(&l, &ray.get_direction());
         let l2 = Vector3::magnitude(&l).powi(2);

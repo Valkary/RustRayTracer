@@ -7,9 +7,9 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub fn new(origin: Vector3, direction: Vector3) -> Self {
+    pub fn new(origin: &Vector3, direction: &Vector3) -> Self {
         return Ray {
-            origin,
+            origin: origin.clone(),
             direction: Vector3::normalize(&direction)
         };
     }
