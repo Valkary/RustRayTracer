@@ -45,7 +45,7 @@ impl Intersectable for Sphere {
         if d2 < 0.0 {
             return None;
         }
-
+        
         let d = d2.sqrt();
 
         if d.is_nan() || d > self.radius {

@@ -12,5 +12,5 @@ pub struct Intersection {
 }
 
 pub trait Intersectable {
-    fn get_intersection(&self, ray: &Ray) -> Option<Intersection>;
+    fn get_intersection(&self, ray: &Ray) -> Option<Intersection>;   
 }

@@ -34,12 +34,12 @@ impl Vector3 {
     pub fn dot_product(a: &Vector3, b: &Vector3) -> f64 {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
-
+    
     pub fn cross_product(a: &Vector3, b: &Vector3) -> Vector3 {
         return Vector3::new(
-            a.y * b.z - b.z * b.y,
-            a.z * b.x - b.x - b.z,
-            a.x * b.y - b.y * b.x,
+            (a.y * b.z) - (a.z * b.y),
+            (a.z * b.x) - (a.x * b.z),
+            (a.x * b.y) - (a.y * b.x),
         );
     }
 
