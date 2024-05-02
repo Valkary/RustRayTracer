@@ -20,7 +20,7 @@ fn main() {
     let sphere = Sphere::new(
         Vector3::new(0.0, 0.0, 30.0),
         10.0,
-        image::Rgb([0.0, 0.0, 0.0]),
+        image::Rgb([0.0, 255.0, 0.0]),
     );
 
     println!("{}", sphere);
@@ -29,5 +29,8 @@ fn main() {
 
     let mut scene: Scene::Scene = Scene::Scene::new(camera);
     scene.set_objects(objects);
-    let pixel_buffer = scene.raytrace();
+
+    // let pixels = scene.raytrace();
+    scene.generate_raytraced_image();
+    // scene.generate_raytraced_image();
 }

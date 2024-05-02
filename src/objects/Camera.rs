@@ -13,7 +13,7 @@ pub struct Camera {
 
 impl Camera {
     pub fn calculate_ray_positions(&self) -> Vec<Vec<Vector3>> {
-        let mut positions: Vec<Vec<Vector3>> = Vec::with_capacity(self.height);
+        let mut positions: Vec<Vec<Vector3>> = vec![vec![Vector3::zero(); self.width]; self.height];
         let angle_max_x = self.fov_h / 2.0;
         let radius_max_x = self.default_z / angle_max_x.to_radians().cos();
 
@@ -30,8 +30,6 @@ impl Camera {
         let step_y = (max_y - min_y) / self.height as f64;
 
         for y in 0..positions.len() {
-            positions[y] = Vec::with_capacity(self.width);
-
             for x in 0..self.width {
                 let pos_x = min_x + (step_x * x as f64);
                 let pos_y = min_y + (step_y * y as f64);

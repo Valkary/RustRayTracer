@@ -1,4 +1,4 @@
-use image::Rgb;
+use image::{Pixel, Rgb, Rgb32FImage, RgbImage};
 
 use crate::{
     objects::{Camera::Camera, Ray::Ray},
@@ -29,12 +29,30 @@ impl<'a> Scene<'a> {
         self.objects.push(object);
     }
 
-    pub fn raytrace(&self) -> Vec<Vec<Rgb<f32>>> {
-        let pos_raytrace = self.camera.calculate_ray_positions();
-        let mut pixel_buffer: Vec<Vec<Rgb<f32>>> = Vec::with_capacity(self.camera.height);
+    pub fn generate_raytraced_image(&self) {
+        let pixel_buffer = self.raytrace();
+        let mut img = Rgb32FImage::new(self.camera.width as u32, self.camera.height as u32);
 
         for y in 0..self.camera.height {
-            pixel_buffer.push(Vec::with_capacity(self.camera.width));
+            for x in 0..self.camera.width {
+                img.put_pixel(x as u32, y as u32, pixel_buffer[y][x].to_rgb());
+            }
+        }
+
+        match img.save("image.bmp") {
+            Ok(_) => println!("Image correctly saved to image.bmp"),
+            Err(e) => println!("{}", e.to_string()),
+        }
+    }
+
+    pub fn raytrace(&self) -> Vec<Vec<Rgb<f32>>> {
+        let pos_raytrace = self.camera.calculate_ray_positions();
+        let mut pixel_buffer: Vec<Vec<Rgb<f32>>> = vec![vec![Rgb([0.0,0.0,0.0]); self.camera.width]; self.camera.height];
+
+        println!("w: {}, h: {}", self.camera.width, self.camera.height);
+        println!("pixel buffer: {}x{}", pixel_buffer.len(), pixel_buffer[0].len());
+
+        for y in 0..self.camera.height {
             for x in 0..self.camera.width {
                 let curr_x = pos_raytrace[y][x].x + self.camera.position.x;
                 let curr_y = pos_raytrace[y][x].y + self.camera.position.y;

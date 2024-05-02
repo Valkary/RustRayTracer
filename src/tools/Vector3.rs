@@ -1,7 +1,7 @@
 use std;
 use std::fmt;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Vector3 {
     pub x: f64,
     pub y: f64,
