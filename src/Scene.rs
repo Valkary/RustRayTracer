@@ -1,4 +1,4 @@
-use image::{Pixel, Rgb, Rgb32FImage, RgbImage};
+use image::{Rgb, RgbImage};
 
 use crate::{
     objects::{Camera::Camera, Ray::Ray},
@@ -31,11 +31,11 @@ impl<'a> Scene<'a> {
 
     pub fn generate_raytraced_image(&self) {
         let pixel_buffer = self.raytrace();
-        let mut img = Rgb32FImage::new(self.camera.width as u32, self.camera.height as u32);
+        let mut img = RgbImage::new(self.camera.width as u32, self.camera.height as u32);
 
         for y in 0..self.camera.height {
             for x in 0..self.camera.width {
-                img.put_pixel(x as u32, y as u32, pixel_buffer[y][x].to_rgb());
+                img.put_pixel(x as u32, y as u32, pixel_buffer[y][x]);
             }
         }
 
@@ -45,9 +45,9 @@ impl<'a> Scene<'a> {
         }
     }
 
-    pub fn raytrace(&self) -> Vec<Vec<Rgb<f32>>> {
+    pub fn raytrace(&self) -> Vec<Vec<Rgb<u8>>> {
         let pos_raytrace = self.camera.calculate_ray_positions();
-        let mut pixel_buffer: Vec<Vec<Rgb<f32>>> = vec![vec![Rgb([0.0,0.0,0.0]); self.camera.width]; self.camera.height];
+        let mut pixel_buffer: Vec<Vec<Rgb<u8>>> = vec![vec![Rgb([0,0,0]); self.camera.width]; self.camera.height];
 
         println!("w: {}, h: {}", self.camera.width, self.camera.height);
         println!("pixel buffer: {}x{}", pixel_buffer.len(), pixel_buffer[0].len());
@@ -62,7 +62,7 @@ impl<'a> Scene<'a> {
 
                 match self.raycast(ray) {
                     Some(inter) => pixel_buffer[y][x] = inter.color,
-                    None => pixel_buffer[y][x] = image::Rgb([0.0, 0.0, 0.0]),
+                    None => pixel_buffer[y][x] = image::Rgb([0,0,0]),
                 }
             }
         }

@@ -8,7 +8,7 @@ use image::Rgb;
 pub struct Sphere {
     position: Vector3,
     radius: f64,
-    color: Rgb<f32>,
+    color: Rgb<u8>,
 }
 
 impl fmt::Display for Sphere {
@@ -22,7 +22,7 @@ impl fmt::Display for Sphere {
 }
 
 impl Sphere {
-    pub fn new(position: Vector3, radius: f64, color: Rgb<f32>) -> Self {
+    pub fn new(position: Vector3, radius: f64, color: Rgb<u8>) -> Self {
         return Sphere {
             position,
             radius,
@@ -47,6 +47,11 @@ impl Intersectable for Sphere {
         }
 
         let d = d2.sqrt();
+
+        if d.is_nan() || d > self.radius {
+            return None;
+        }
+
         let diff = (self.radius.powi(2) - d.powi(2)).sqrt();
         let t0 = tca - diff;
         let t1 = tca + diff;
