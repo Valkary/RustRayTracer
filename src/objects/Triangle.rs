@@ -1,13 +1,16 @@
+use std::fmt;
+
 use image::Rgb;
 
 use crate::tools::{Intersectable::{Intersectable, Intersection}, Vector3::Vector3};
 
-static EPSILON: f64 = 0.0000000000001;
+static EPSILON: f32 = 0.0000000000001;
 
+#[derive(Clone)]
 pub struct Triangle {
     vertices: [Vector3; 3],
     normals: [Vector3; 3],
-    color: Rgb<u8>
+    pub color: Rgb<u8>
 }
 
 impl Triangle {
@@ -24,35 +27,19 @@ impl Triangle {
         let w = Vector3::sub(&self.vertices[0], &self.vertices[2]);
 
         return Vector3::normalize(&Vector3::cross_product(&v, &w));
-    } 
+    }
+
+    pub fn get_vertices(&self) -> [Vector3; 3] {
+        return self.vertices.clone();
+    }
+
+    pub fn set_vertices(&mut self, vertices: [Vector3; 3]) {
+        self.vertices = vertices;
+    }
 }
 
-// public Intersection getIntersection(Ray ray) {
-//     Intersection intersection = new Intersection(null, -1, null, null);
-
-//     Vector3D[] vert = getVertices();
-//     Vector3D v2v0 = Vector3D.substract(vert[2], vert[0]);
-//     Vector3D v1v0 = Vector3D.substract(vert[1], vert[0]);
-//     Vector3D vectorP = Vector3D.crossProduct(ray.getDirection(), v1v0);
-//     double det = Vector3D.dotProduct(v2v0, vectorP);
-//     double invDet = 1.0 / det;
-//     Vector3D vectorT = Vector3D.substract(ray.getOrigin(), vert[0]);
-//     double u = invDet * Vector3D.dotProduct(vectorT, vectorP);
-
-//     if (!(u < 0 || u > 1)) {
-//         Vector3D vectorQ = Vector3D.crossProduct(vectorT, v2v0);
-//         double v = invDet * Vector3D.dotProduct(ray.getDirection(), vectorQ);
-//         if (!(v < 0 || (u + v) > (1.0 + EPSILON))) {
-//             double t = invDet * Vector3D.dotProduct(vectorQ, v1v0);
-//             intersection.setDistance(t);
-//         }
-//     }
-
-//     return intersection;
-// }
-
 impl Intersectable for Triangle {
-    fn get_intersection(&self, ray: &super::Ray::Ray) -> Option<crate::tools::Intersectable::Intersection> {
+    fn get_intersection(&self, ray: &super::Ray::Ray) -> Option<Intersection> {
         let v2v0 = Vector3::sub(&self.vertices[2], &self.vertices[0]);
         let v1v0 = Vector3::sub(&self.vertices[1], &self.vertices[0]);
         let vector_p = Vector3::cross_product(&ray.get_direction(), &v1v0);
@@ -78,6 +65,16 @@ impl Intersectable for Triangle {
             position: vector_p,
             normal: self.get_normal(),
             color: self.color,
-        })
+        });
+    }
+}
+
+impl fmt::Display for Triangle {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Triangle: {{\n  v0: {},\n  v1: {},\n  v2: {}\n}}",
+            self.vertices[0], self.vertices[1], self.vertices[2]
+        )
     }
 }

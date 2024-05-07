@@ -1,13 +1,13 @@
 use crate::tools::Vector3::Vector3;
 
 pub struct Camera {
-    pub fov_h: f64,
-    pub fov_v: f64,
-    pub default_z: f64,
+    pub fov_h: f32,
+    pub fov_v: f32,
+    pub default_z: f32,
     pub width: usize,
     pub height: usize,
-    pub near_plane: f64,
-    pub fal_plane: f64,
+    pub near_plane: f32,
+    pub fal_plane: f32,
     pub position: Vector3,
 }
 
@@ -26,13 +26,13 @@ impl Camera {
         let max_y = angle_max_y.to_radians().sin() * radius_max_y;
         let min_y = -max_y;
 
-        let step_x = (max_x - min_x) / self.width as f64;
-        let step_y = (max_y - min_y) / self.height as f64;
+        let step_x = (max_x - min_x) / self.width as f32;
+        let step_y = (max_y - min_y) / self.height as f32;
 
         for y in 0..positions.len() {
             for x in 0..self.width {
-                let pos_x = min_x + (step_x * x as f64);
-                let pos_y = min_y + (step_y * y as f64);
+                let pos_x = min_x + (step_x * x as f32);
+                let pos_y = min_y + (step_y * y as f32);
 
                 positions[y][x] = Vector3::new(pos_x, pos_y, self.default_z);
             }

@@ -5,7 +5,7 @@ use crate::objects::Ray::Ray;
 
 #[derive(Clone, Debug)]
 pub struct Intersection {
-    pub distance: f64,
+    pub distance: f32,
     pub position: Vector3,
     pub normal: Vector3,
     pub color: Rgb<u8>,

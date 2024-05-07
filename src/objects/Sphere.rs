@@ -7,7 +7,7 @@ use image::Rgb;
 
 pub struct Sphere {
     position: Vector3,
-    radius: f64,
+    radius: f32,
     color: Rgb<u8>,
 }
 
@@ -22,7 +22,7 @@ impl fmt::Display for Sphere {
 }
 
 impl Sphere {
-    pub fn new(position: Vector3, radius: f64, color: Rgb<u8>) -> Self {
+    pub fn new(position: Vector3, radius: f32, color: Rgb<u8>) -> Self {
         return Sphere {
             position,
             radius,

@@ -1,11 +1,11 @@
 use std;
 use std::fmt;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Vector3 {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
 }
 
 impl Vector3 {
@@ -19,7 +19,7 @@ impl Vector3 {
         return Vector3::ZERO.clone();
     }
 
-    pub fn new(x: f64, y: f64, z: f64) -> Self {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
         return Vector3 { x, y, z };
     }
 
@@ -31,7 +31,7 @@ impl Vector3 {
         return Vector3::new(a.x - b.x, a.y - b.y, a.z - b.z);
     }
 
-    pub fn dot_product(a: &Vector3, b: &Vector3) -> f64 {
+    pub fn dot_product(a: &Vector3, b: &Vector3) -> f32 {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
     
@@ -43,11 +43,11 @@ impl Vector3 {
         );
     }
 
-    pub fn scalar_multiplication(v: &Vector3, scalar: f64) -> Vector3 {
+    pub fn scalar_multiplication(v: &Vector3, scalar: f32) -> Vector3 {
         return Vector3::new(v.x * scalar, v.y * scalar, v.z * scalar);
     }
 
-    pub fn magnitude(v: &Vector3) -> f64 {
+    pub fn magnitude(v: &Vector3) -> f32 {
         return Vector3::dot_product(&v, &v).sqrt();
     }
 
