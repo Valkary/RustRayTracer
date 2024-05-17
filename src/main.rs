@@ -1,13 +1,15 @@
 use std::time::SystemTime;
 
-use objects::Model::Model3D;
+use objects::object3d::Object3D;
+use objects::model::Model3D;
 
-mod Scene;
+mod scene;
 mod objects;
 mod tools;
+mod Scene;
 
-use crate::objects::{Camera::Camera, Sphere::Sphere, Triangle::Triangle};
-use crate::tools::{Intersectable::Intersectable, Vector3::Vector3};
+use crate::objects::{camera::Camera, sphere::Sphere, triangle::Triangle};
+use crate::tools::vector3::Vector3;
 
 fn main() {
     let now = SystemTime::now();
@@ -40,6 +42,7 @@ fn main() {
         image::Rgb([255, 0, 0]),
     );
 
+
     let model01 = Model3D::new(
         Vector3::new(10.0, 0.0, 0.0), 
         vec![triangle01, triangle02]
@@ -47,21 +50,21 @@ fn main() {
 
     let model02 = Model3D::new_from_obj_file(Vector3::zero(), "SmallTeapot.obj").unwrap();
 
-    let objects: Vec<Box<dyn Intersectable>> = vec![
-        // Box::new(sphere01),
-        // Box::new(sphere02),
-        // Box::new(sphere03),
-        // Box::new(model01),
-        Box::new(model02)
+    let objects: Vec<Object3D> = vec![
+        Object3D::Sphere(sphere01),
+        Object3D::Sphere(sphere02),
+        Object3D::Sphere(sphere03),
+        Object3D::Model(model01),
+        Object3D::Model(model02)
     ];
 
-    let mut scene: Scene::Scene = Scene::Scene::new(camera);
+    let mut scene: scene::Scene = scene::Scene::new(camera);
     scene.set_objects(objects);
     scene.generate_raytraced_image();
 
     match now.elapsed() {
         Ok(elapsed) => {
-            println!("Duration: {} millis", elapsed.as_millis());
+            println!("Duration: {} seconds", elapsed.as_millis());
         }
         Err(e) => {
             // an error occurred!

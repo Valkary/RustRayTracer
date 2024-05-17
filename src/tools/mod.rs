@@ -1,2 +1,2 @@
-pub mod Intersectable;
-pub mod Vector3;
+pub mod intersectable;
+pub mod vector3;

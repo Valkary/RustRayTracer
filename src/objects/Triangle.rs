@@ -2,7 +2,7 @@ use std::fmt;
 
 use image::Rgb;
 
-use crate::tools::{Intersectable::{Intersectable, Intersection}, Vector3::Vector3};
+use crate::tools::{intersectable::{Intersectable, Intersection}, vector3::Vector3};
 
 static EPSILON: f32 = 0.0000000000001;
 
@@ -39,7 +39,7 @@ impl Triangle {
 }
 
 impl Intersectable for Triangle {
-    fn get_intersection(&self, ray: &super::Ray::Ray) -> Option<Intersection> {
+    fn get_intersection(&self, ray: &super::ray::Ray) -> Option<Intersection> {
         let v2v0 = Vector3::sub(&self.vertices[2], &self.vertices[0]);
         let v1v0 = Vector3::sub(&self.vertices[1], &self.vertices[0]);
         let vector_p = Vector3::cross_product(&ray.get_direction(), &v1v0);

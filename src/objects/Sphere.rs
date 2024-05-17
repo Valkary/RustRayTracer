@@ -1,8 +1,8 @@
 use std::fmt;
 
-use super::Ray::Ray;
-use crate::tools::Intersectable::{Intersectable, Intersection};
-use crate::tools::Vector3::Vector3;
+use super::ray::Ray;
+use crate::tools::intersectable::{Intersectable, Intersection};
+use crate::tools::vector3::Vector3;
 use image::Rgb;
 
 pub struct Sphere {

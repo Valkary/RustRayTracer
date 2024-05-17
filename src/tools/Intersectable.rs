@@ -1,7 +1,7 @@
 use image::Rgb;
 
-use super::Vector3::Vector3;
-use crate::objects::Ray::Ray;
+use super::vector3::Vector3;
+use crate::objects::ray::Ray;
 
 #[derive(Clone, Debug)]
 pub struct Intersection {

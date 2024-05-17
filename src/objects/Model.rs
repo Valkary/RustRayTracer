@@ -3,10 +3,10 @@ use std::fmt;
 use image::Rgb;
 use obj::{Obj, ObjError};
 
-use super::Triangle::Triangle;
+use super::triangle::Triangle;
 use crate::tools::{
-    Intersectable::{Intersectable, Intersection},
-    Vector3::Vector3,
+    intersectable::{Intersectable, Intersection},
+    vector3::Vector3,
 };
 
 pub struct Model3D {
@@ -66,7 +66,7 @@ impl Model3D {
 }
 
 impl Intersectable for Model3D {
-    fn get_intersection(&self, ray: &super::Ray::Ray) -> Option<Intersection> {
+    fn get_intersection(&self, ray: &super::ray::Ray) -> Option<Intersection> {
         self.triangles
             .iter()
             .fold(None, |acc: Option<Intersection>, triangle| {

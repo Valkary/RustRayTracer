@@ -1,19 +1,22 @@
+use std::sync::{Arc, Mutex};
+use std::thread;
+
 use image::{Rgb, RgbImage};
 
 use crate::{
-    objects::{Camera::Camera, Ray::Ray},
+    objects::{camera::Camera, object3d::Object3D, ray::Ray},
     tools::{
-        Intersectable::{Intersectable, Intersection},
-        Vector3::Vector3,
+        intersectable::{Intersectable, Intersection},
+        vector3::Vector3,
     },
 };
 
-pub struct Scene<'a> {
+pub struct Scene {
     camera: Camera,
-    objects: Vec<Box<dyn Intersectable + 'a>>,
+    objects: Vec<Object3D>,
 }
 
-impl<'a> Scene<'a> {
+impl Scene {
     pub fn new(camera: Camera) -> Self {
         Self {
             camera,
@@ -21,11 +24,11 @@ impl<'a> Scene<'a> {
         }
     }
 
-    pub fn set_objects(&mut self, objects: Vec<Box<dyn Intersectable + 'a>>) {
+    pub fn set_objects(&mut self, objects: Vec<Object3D>) {
         self.objects = objects;
     }
 
-    pub fn add_object(&mut self, object: Box<dyn Intersectable + 'a>) {
+    pub fn add_object(&mut self, object: Object3D) {
         self.objects.push(object);
     }
 
@@ -46,48 +49,95 @@ impl<'a> Scene<'a> {
     }
 
     pub fn raytrace(&self) -> Vec<Vec<Rgb<u8>>> {
+        let n_threads = 16;
         let pos_raytrace = self.camera.calculate_ray_positions();
-        let mut pixel_buffer: Vec<Vec<Rgb<u8>>> = vec![vec![Rgb([0,0,0]); self.camera.width]; self.camera.height];
+        let pixel_buffer: Vec<Vec<Rgb<u8>>> =
+            vec![vec![Rgb([0, 0, 0]); self.camera.width]; self.camera.height];
 
         println!("w: {}, h: {}", self.camera.width, self.camera.height);
-        println!("pixel buffer: {}x{}", pixel_buffer.len(), pixel_buffer[0].len());
+        println!(
+            "pixel buffer: {}x{}",
+            pixel_buffer.len(),
+            pixel_buffer[0].len()
+        );
 
-        for y in 0..self.camera.height {
-            for x in 0..self.camera.width {
-                let curr_x = pos_raytrace[y][x].x + self.camera.position.x;
-                let curr_y = pos_raytrace[y][x].y + self.camera.position.y;
-                let curr_z = pos_raytrace[y][x].z + self.camera.position.z;
+        let step_x = self.camera.width / n_threads;
+        let step_y = self.camera.height / n_threads;
 
-                let ray = Ray::new(&self.camera.position, &Vector3::new(curr_x, curr_y, curr_z));
+        let pixel_buffer = Arc::new(Mutex::new(pixel_buffer));
 
-                match self.raycast(ray) {
-                    Some(inter) => pixel_buffer[y][x] = inter.color,
-                    None => pixel_buffer[y][x] = image::Rgb([0,0,0]),
-                }
+        let mut handles = vec![];
+
+        for y in 0..n_threads {
+            for x in 0..n_threads {
+                let pos_raytrace = pos_raytrace.clone();
+                let pixel_buffer = Arc::clone(&pixel_buffer);
+                let handle = thread::spawn(move || {
+                    self.raytrace_section(
+                        &pos_raytrace,
+                        &pixel_buffer,
+                        (x * step_x, (x + 1) * step_x),
+                        (y * step_y, (y + 1) * step_y),
+                    );
+                });
+                handles.push(handle);
             }
         }
 
-        return pixel_buffer;
+        for handle in handles {
+            handle.join().unwrap();
+        }
+
+        let pixel_buffer = Arc::try_unwrap(pixel_buffer).unwrap().into_inner().unwrap();
+        pixel_buffer
+    }
+
+    fn raytrace_section(
+        &self,
+        pos_raytrace: &Vec<Vec<Vector3>>,
+        pixel_buffer: &Arc<Mutex<Vec<Vec<Rgb<u8>>>>>,
+        x_range: (usize, usize),
+        y_range: (usize, usize),
+    ) {
+        for y in y_range.0..y_range.1 {
+            for x in x_range.0..x_range.1 {
+                if x < self.camera.width && y < self.camera.height {
+                    let curr_x = pos_raytrace[y][x].x + self.camera.position.x;
+                    let curr_y = pos_raytrace[y][x].y + self.camera.position.y;
+                    let curr_z = pos_raytrace[y][x].z + self.camera.position.z;
+
+                    let ray =
+                        Ray::new(&self.camera.position, &Vector3::new(curr_x, curr_y, curr_z));
+
+                    let color = match self.raycast(ray) {
+                        Some(inter) => inter.color,
+                        None => image::Rgb([0, 0, 0]),
+                    };
+
+                    let mut pixel_buffer = pixel_buffer.lock().unwrap();
+                    pixel_buffer[y][x] = color;
+                }
+            }
+        }
     }
 
     fn raycast(&self, ray: Ray) -> Option<Intersection> {
-        return self
-            .objects
+        self.objects
             .iter()
             .fold(None, |acc: Option<Intersection>, object| {
                 match object.get_intersection(&ray) {
                     Some(curr) => match &acc {
                         Some(prev) => {
                             if curr.distance < prev.distance {
-                                return Some(curr.clone());
+                                Some(curr.clone())
                             } else {
-                                return acc;
+                                acc
                             }
                         }
-                        None => return Some(curr.clone()),
+                        None => Some(curr.clone()),
                     },
-                    None => return acc,
+                    None => acc,
                 }
-            });
+            })
     }
 }
