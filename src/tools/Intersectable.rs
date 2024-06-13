@@ -1,14 +1,18 @@
-use image::Rgb;
-
-use super::vector3::Vector3;
-use crate::objects::ray::Ray;
+use crate::objects::{object3d::Object3D, ray::Ray};
 
 #[derive(Clone, Debug)]
-pub struct Intersection {
+pub struct Intersection<'a> {
     pub distance: f32,
-    pub position: Vector3,
-    pub normal: Vector3,
-    pub color: Rgb<u8>,
+    pub object: Object3D<'a>
+}
+
+impl<'a> Intersection<'a> {
+    pub fn new(distance: f32, object: Object3D<'a>) -> Intersection<'a> {
+        return Intersection {
+            distance,
+            object
+        }
+    }
 }
 
 pub trait Intersectable {

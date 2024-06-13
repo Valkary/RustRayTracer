@@ -1,19 +1,18 @@
 use crate::tools::intersectable::{Intersectable, Intersection};
 
-use super::{model::Model3D, ray::Ray, sphere::Sphere, triangle::Triangle};
+use super::{plane::Plane, ray::Ray, sphere::Sphere};
 
-pub enum Object3D {
-    Model(Model3D),
-    Sphere(Sphere),
-    Triangle(Triangle)
+#[derive(Debug, Clone)]
+pub enum Object3D<'a> {
+    Sphere(&'a Sphere),
+    Plane(&'a Plane)
 }
 
-impl Intersectable for Object3D {
-    fn get_intersection(&self, ray: &Ray) -> Option<Intersection> {
-        match self {
-            Object3D::Model(model) => model.get_intersection(ray),
+impl<'a> Intersectable for Object3D<'a> {
+    fn get_intersection(&self, ray: &Ray) -> Option<Intersection<'a>> {
+        match *self {
             Object3D::Sphere(sphere) => sphere.get_intersection(ray),
-            Object3D::Triangle(triangle) => triangle.get_intersection(ray),
+            Object3D::Plane(plane) => plane.get_intersection(ray),
         }
     }
 }

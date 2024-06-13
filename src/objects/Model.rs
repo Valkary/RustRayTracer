@@ -9,19 +9,21 @@ use crate::tools::{
     vector3::Vector3,
 };
 
-pub struct Model3D {
+#[derive(Debug)]
+pub struct Model3D<'a> {
     pub position: Vector3,
-    pub triangles: Vec<Triangle>,
+    pub triangles: Vec<Triangle<'a>>,
+    pub color: Color
 }
 
-impl Model3D {
-    pub fn new_from_obj_file(position: Vector3, obj_path: &str) -> Result<Model3D, ObjError> {
+impl<'a> Model3D<'a> {
+    pub fn new_from_obj_file(position: Vector3, obj_path: &str, color: Color) -> Result<Model3D, ObjError> {
         let obj = Obj::load(obj_path)?;
         let mut triangles = vec![];
 
         let mut vtx_triangle = [Vector3::zero(), Vector3::zero(), Vector3::zero()];
-
-        obj.data.position.windows(3).for_each(|vtx| {
+        
+        obj.data.position.windows(3).for_each(move |vtx| {
             for i in 0..3 {
                 vtx_triangle[i].x = vtx[i][0];
                 vtx_triangle[i].y = vtx[i][1];
@@ -32,20 +34,21 @@ impl Model3D {
                 vtx_triangle[0].clone(),
                 vtx_triangle[1].clone(),
                 vtx_triangle[2].clone(),
-                Rgb([255, 0, 0]),
+                &color
             ))
         });
 
-        return Ok(Model3D::new(position, triangles));
+        return Ok(Model3D::new(position, triangles, color));
     }
 
-    pub fn new(position: Vector3, triangles: Vec<Triangle>) -> Self {
+    pub fn new(position: Vector3, triangles: Vec<Triangle<'a>>, color: Color) -> Self {
         let mut triangles = triangles.clone();
         Model3D::set_translated_triangles(&position, &mut triangles);
 
         return Model3D {
             position,
             triangles,
+            color
         };
     }
 
@@ -65,7 +68,7 @@ impl Model3D {
     }
 }
 
-impl Intersectable for Model3D {
+impl<'a> Intersectable for Model3D<'a> {
     fn get_intersection(&self, ray: &super::ray::Ray) -> Option<Intersection> {
         self.triangles
             .iter()
@@ -87,7 +90,7 @@ impl Intersectable for Model3D {
     }
 }
 
-impl fmt::Display for Model3D {
+impl<'a> fmt::Display for Model3D<'a> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         writeln!(f, "Model3D: {{\n  Triangles: [");
         for i in 0..self.triangles.len() {

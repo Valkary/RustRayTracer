@@ -1,28 +1,20 @@
 use std::fmt;
 
+use super::object3d::Object3D;
 use super::ray::Ray;
+use crate::tools::color_tools::ColorType;
 use crate::tools::intersectable::{Intersectable, Intersection};
 use crate::tools::vector3::Vector3;
-use image::Rgb;
 
+#[derive(Debug)]
 pub struct Sphere {
-    position: Vector3,
-    radius: f32,
-    color: Rgb<u8>,
-}
-
-impl fmt::Display for Sphere {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "Sphere: {{\n  position: {},\n  radius: {},\n  color: {:?}\n}}",
-            self.position, self.radius, self.color
-        )
-    }
+    pub position: Vector3,
+    pub radius: f32,
+    pub color: ColorType,
 }
 
 impl Sphere {
-    pub fn new(position: Vector3, radius: f32, color: Rgb<u8>) -> Self {
+    pub fn new(position: Vector3, radius: f32, color: ColorType) -> Self {
         return Sphere {
             position,
             radius,
@@ -57,17 +49,20 @@ impl Intersectable for Sphere {
         let t1 = tca + diff;
 
         let distance = t0.min(t1);
-        let position = Vector3::add(
-            &ray.origin,
-            &Vector3::scalar_multiplication(&ray.get_direction(), distance),
-        );
-        let normal = Vector3::normalize(&Vector3::sub(&position, &self.position));
 
         return Some(Intersection {
             distance,
-            position,
-            normal,
-            color: self.color,
+            object: Object3D::Sphere(self)
         });
+    }
+}
+
+impl fmt::Display for Sphere {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Sphere: {{\n  position: {},\n  radius: {},\n  color: {:?}\n}}",
+            self.position, self.radius, self.color
+        )
     }
 }
