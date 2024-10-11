@@ -25,18 +25,18 @@ fn main() {
         default_z: 15.0,
     };
 
-    let sphere01 = Sphere::new(Vector3::new(0.0, 0.0, 10.0), 5.0, Color::DarkRed.rgb());
-    let sphere02 = Sphere::new(Vector3::new(3.0, -2.0, 8.0), 2.0, Color::DarkGreen.rgb());
-    let sphere03 = Sphere::new(Vector3::new(-6.0, 3.0, 2.0), 1.5, Color::DarkOrange.rgb());
+    let sphere01 = Sphere::new(Vector3::new(0.0, 0.0, 10.0), 5.0, Color::DarkRed);
+    let sphere02 = Sphere::new(Vector3::new(3.0, -2.0, 8.0), 2.0, Color::DarkGreen);
+    let sphere03 = Sphere::new(Vector3::new(-6.0, 3.0, 2.0), 1.5, Color::DarkOrange);
     let plane01 = Plane::new(
         Vector3::new(0, 5, -4),
         Vector3::new(0, 1, 0),
-        Color::DarkGray.rgb(),
+        Color::DarkGray,
     );
     let plane02 = Plane::new(
         Vector3::new(0, 0, 10),
         Vector3::new(0, 0, -1),
-        Color::LightBlue.rgb(),
+        Color::LightBlue,
     );
 
     let objects: Vec<Object3D> = vec![

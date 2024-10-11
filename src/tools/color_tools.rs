@@ -2,6 +2,7 @@ use image::Rgb;
 
 pub type ColorType = Rgb<u8>;
 #[allow(unused)]
+#[derive(Debug, Clone, Copy)]
 pub enum Color {
     Red,
     DarkRed,

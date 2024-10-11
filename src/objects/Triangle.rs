@@ -1,27 +1,29 @@
 use std::fmt;
 
-use image::Rgb;
-
-use crate::tools::{intersectable::{Intersectable, Intersection}, vector3::Vector3};
+use crate::tools::{
+    color_tools::Color,
+    intersectable::{Intersectable, Intersection},
+    vector3::Vector3,
+};
 
 use super::object3d::Object3D;
 
 static EPSILON: f32 = 0.0000000000001;
 
-#[derive(Clone, Debug)]
-pub struct Triangle<'a> {
+#[derive(Clone, Debug, Copy)]
+pub struct Triangle {
     pub vertices: [Vector3; 3],
     pub normals: [Vector3; 3],
-    pub model: &'a Object3D
+    pub color: Color,
 }
 
-impl<'a> Triangle<'a> {
-    pub fn new<'b>(v0: Vector3, v1: Vector3, v2: Vector3, color: &'b Color ) -> Triangle<'b> {
+impl Triangle {
+    pub fn new(v0: Vector3, v1: Vector3, v2: Vector3, color: Color) -> Triangle {
         return Triangle {
             vertices: [v0, v1, v2],
             normals: [Vector3::zero(), Vector3::zero(), Vector3::zero()],
-            color
-        }
+            color,
+        };
     }
 
     pub fn get_normal(&self) -> Vector3 {
@@ -40,7 +42,7 @@ impl<'a> Triangle<'a> {
     }
 }
 
-impl<'a> Intersectable for Triangle<'a> {
+impl Intersectable for Triangle {
     fn get_intersection(&self, ray: &super::ray::Ray) -> Option<Intersection> {
         let v2v0 = Vector3::sub(&self.vertices[2], &self.vertices[0]);
         let v1v0 = Vector3::sub(&self.vertices[1], &self.vertices[0]);
@@ -64,12 +66,12 @@ impl<'a> Intersectable for Triangle<'a> {
 
         return Some(Intersection {
             distance: t,
-            object: &Object3D::Triangle(*self)
+            object: Object3D::Triangle(self),
         });
     }
 }
 
-impl<'a> fmt::Display for Triangle<'a> {
+impl fmt::Display for Triangle {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,

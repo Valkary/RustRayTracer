@@ -1,5 +1,5 @@
 use crate::tools::{
-    color_tools::ColorType,
+    color_tools::Color,
     intersectable::{Intersectable, Intersection},
     vector3::Vector3,
 };
@@ -10,11 +10,11 @@ use super::{object3d::Object3D, ray::Ray};
 pub struct Plane {
     pub origin: Vector3,
     pub normal: Vector3,
-    pub color: ColorType,
+    pub color: Color,
 }
 
 impl Plane {
-    pub fn new(origin: Vector3, normal: Vector3, color: ColorType) -> Self {
+    pub fn new(origin: Vector3, normal: Vector3, color: Color) -> Self {
         return Plane {
             origin,
             normal,

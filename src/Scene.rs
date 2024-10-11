@@ -70,8 +70,9 @@ impl<'a> Scene<'a> {
                     Some(inter) => {
                         pixel_buffer[y][x] = {
                             match inter.object {
-                                Object3D::Sphere(sphere) => sphere.color,
-                                Object3D::Plane(plane) => plane.color,
+                                Object3D::Sphere(sphere) => sphere.color.rgb(),
+                                Object3D::Plane(plane) => plane.color.rgb(),
+                                Object3D::Triangle(triangle) => triangle.color.rgb(),
                             }
                         }
                     }

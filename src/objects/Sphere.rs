@@ -2,7 +2,7 @@ use std::fmt;
 
 use super::object3d::Object3D;
 use super::ray::Ray;
-use crate::tools::color_tools::ColorType;
+use crate::tools::color_tools::Color;
 use crate::tools::intersectable::{Intersectable, Intersection};
 use crate::tools::vector3::Vector3;
 
@@ -10,11 +10,11 @@ use crate::tools::vector3::Vector3;
 pub struct Sphere {
     pub position: Vector3,
     pub radius: f32,
-    pub color: ColorType,
+    pub color: Color,
 }
 
 impl Sphere {
-    pub fn new(position: Vector3, radius: f32, color: ColorType) -> Self {
+    pub fn new(position: Vector3, radius: f32, color: Color) -> Self {
         return Sphere {
             position,
             radius,
@@ -37,7 +37,7 @@ impl Intersectable for Sphere {
         if d2 < 0.0 {
             return None;
         }
-        
+
         let d = d2.sqrt();
 
         if d.is_nan() || d > self.radius {
@@ -52,7 +52,7 @@ impl Intersectable for Sphere {
 
         return Some(Intersection {
             distance,
-            object: Object3D::Sphere(self)
+            object: Object3D::Sphere(self),
         });
     }
 }

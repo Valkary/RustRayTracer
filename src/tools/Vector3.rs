@@ -1,8 +1,8 @@
+use num::NumCast;
 use std::fmt;
 use std::ops::{Add, Mul, Sub};
-use num::NumCast;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Copy, PartialEq)]
 pub struct Vector3 {
     pub x: f32,
     pub y: f32,
@@ -39,7 +39,7 @@ impl Vector3 {
     pub fn dot_product(a: &Vector3, b: &Vector3) -> f32 {
         return a.x * b.x + a.y * b.y + a.z * b.z;
     }
-    
+
     pub fn cross_product(a: &Vector3, b: &Vector3) -> Self {
         return Vector3::new(
             (a.y * b.z) - (a.z * b.y),
